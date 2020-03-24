@@ -55,7 +55,6 @@ def run_analysis():
              'Coin', 'Coin', 'Coin', 'Coin', 'Coin', 'Coin',
              'Seven3', 'Seven3', 'Seven3',
              'Wild',
-             'Jackpot',
              'Bonus','Bonus']
 
 
@@ -72,12 +71,12 @@ def run_analysis():
         first_seven =[]
         first_seven[:] = [x for x in first_nine if x != 'Bonus']
 
-        for card1, card2 in zip(first_nine,second_seven):
+        for card1, card2 in zip(first_seven,second_seven):
             if card1 == card2:
                 stats[card1] = stats[card1] + 1
             if card1 is 'Wild' and card2 not in ['Jackpot', 'Bonus']:
                 stats[card2] = stats[card2] + 1
-            if card2 is 'Wild' and card1 not in ['Jackpot', 'Bonus']:
+            if card2 is 'Wild' and card1 not in ['Bonus']:
                 stats[card1] = stats[card1] + 1
 
 
@@ -94,4 +93,4 @@ if __name__ == '__main__':
         round = round + 1
         run_analysis()
         print("Round: {}, Bonus Rounds: {}, percent: {} %"
-              .format(round,num_bonus_rounds,str(float(num_bonus_rounds/round * 100))))
+              .format(round,num_bonus_rounds,str(float(num_bonus_rounds)/float(round) * 100)))
