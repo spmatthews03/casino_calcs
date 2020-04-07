@@ -1,5 +1,12 @@
 import random
 from os import system
+
+# runtime variables
+deals = 100
+round = 0
+
+
+
 # indexes of cards for each line
 l1 = [0,4,8]
 l2 = [0,1,2]
@@ -32,24 +39,96 @@ COIN = 'Coin'
 SEVEN3 = 'Seven3'
 
 stats = {
-    '2xbar': 0,
-    '3xbar': 0,
-    '2xbar2': 0,
-    '3xbar2': 0,
-    '2xmelon': 0,
-    '3xmelon': 0,
-    '2xcoin': 0,
-    '3xcoin': 0,
-    '2xcrown': 0,
-    '3xcrown': 0,
-    '2xcherry': 0,
-    '3xcherry': 0,
-    '2xcherry2': 0,
-    '3xcherry2': 0,
-    '2xseven': 0,
-    '3xseven': 0,
-    '2xseven3': 0,
-    '3xseven3': 0
+    '2xbar': {
+        'bestPlayHits': 0,
+        'overallHits':0,
+        'payout':2
+    },
+    '3xbar': {
+        'bestPlayHits': 0,
+        'overallHits':0,
+        'payout':20
+    },
+    '2xbar2': {
+        'bestPlayHits': 0,
+        'overallHits':0,
+        'payout':6
+    },
+    '3xbar2': {
+        'bestPlayHits': 0,
+        'overallHits':0,
+        'payout':60
+    },
+    '2xMelon': {
+        'bestPlayHits': 0,
+        'overallHits':0,
+        'payout':2
+    },
+    '3xMelon': {
+        'bestPlayHits': 0,
+        'overallHits':0,
+        'payout':20
+    },
+    '2xCoin': {
+        'bestPlayHits': 0,
+        'overallHits':0,
+        'payout':4
+    },
+    '3xCoin': {
+        'bestPlayHits': 0,
+        'overallHits':0,
+        'payout':40
+    },
+    '2xCrown': {
+        'bestPlayHits': 0,
+        'overallHits':0,
+        'payout':6
+    },
+    '3xCrown': {
+        'bestPlayHits': 0,
+        'overallHits':0,
+        'payout':60
+    },
+    '2xcherry': {
+        'bestPlayHits': 0,
+        'overallHits':0,
+        'payout':1
+    },
+    '3xcherry': {
+        'bestPlayHits': 0,
+        'overallHits':0,
+        'payout':10
+    },
+    '2xcherry2': {
+        'bestPlayHits': 0,
+        'overallHits':0,
+        'payout':4
+    },
+    '3xcherry2': {
+        'bestPlayHits': 0,
+        'overallHits':0,
+        'payout':40
+    },
+    '2xSeven': {
+        'bestPlayHits': 0,
+        'overallHits':0,
+        'payout':6
+    },
+    '3xSeven': {
+        'bestPlayHits': 0,
+        'overallHits':0,
+        'payout':60
+    },
+    '2xSeven3': {
+        'bestPlayHits': 0,
+        'overallHits':0,
+        'payout':10
+    },
+    '3xSeven3':{
+        'bestPlayHits': 0,
+        'overallHits':0,
+        'payout':100
+    },
 }
 
 times_hit = {
@@ -61,28 +140,10 @@ times_hit = {
 }
 
 def get_double_payout(card):
-    if card in [BAR, MELON]:
-        return 2
-    elif card in [BAR2, CROWN, SEVEN]:
-        return 6
-    elif card in [COIN, CHERRY2]:
-        return 4
-    elif card is CHERRY:
-        return 1
-    elif card is SEVEN3:
-        return 10
+    return stats['2x' + card]['payout']
 
 def get_triple_payout(card):
-    if card in [BAR, MELON]:
-        return 20
-    elif card in [BAR2, CROWN, SEVEN]:
-        return 60
-    elif card in [COIN, CHERRY2]:
-        return 40
-    elif card is CHERRY:
-        return 10
-    elif card is SEVEN3:
-        return 100
+    return stats['3x' + card]['payout']
 
 def deal_nine(remaining_cards):
     played= []
@@ -98,6 +159,17 @@ def deal_new_card(remaining_cards):
     remaining_cards.remove(card)
     return card, remaining_cards
 
+def winning_lines(hand):
+    winning_rows = []
+    for line in lines:
+        if hand[line[0]] == hand[line[1]]:
+            if hand[line[1]] == hand[line[2]]:
+                winning_rows.append('3x' + hand[line[2]])
+            else:
+                winning_rows.append('2x' + hand[line[2]])
+    return winning_rows            
+
+
 def calculate_payout(hand):
     total = 0
     for line in lines:
@@ -105,10 +177,8 @@ def calculate_payout(hand):
         if hand[line[0]] == hand[line[1]]:
             if hand[line[1]] == hand[line[2]]:
                 line_total = line_total + get_triple_payout(hand[line[0]])
-                # print("Triple Payout with: {}".format(hand[line[0]]))
             else:
                 line_total = line_total + get_double_payout(hand[line[0]])
-                # print("Double Payout with: {}".format(hand[line[0]]))
             total = line_total
     return total
 
@@ -124,15 +194,55 @@ def reset_cards():
             'Seven3', 'Seven3', 'Seven3']
     return cards
 
+def print_overall_stats():
+    maxrtp = 0
+    for key, value in stats.items():
+        maxrtp = maxrtp + value['overallHits']/(512 * round * deals)*value['payout']
+        print("{}: {} hits, Probability: {}, RTP: {}".format(key, value['overallHits'], value['overallHits']/(512 * round * deals), value['overallHits']/(512 * round * deals)*value['payout']))
+    print("MAX RTP OVERALL: {}".format(maxrtp))
 
+def print_best_hand_stats():
+    maxrtp = 0
+    for key, value in stats.items():
+        maxrtp = maxrtp + value['bestPlayHits']/(512 * round * deals)*value['payout']
+        print("{}: {} hits, Probability: {}, RTP: {}".format(key, value['bestPlayHits'], value['bestPlayHits']/(round * deals), value['bestPlayHits']/(round * deals)*value['payout']))
+    print("MAX RTP BEST HAND: {}".format(maxrtp))
+
+
+def calculate_payout_deal(array):
+    total = 0
+    for item in array:
+        if item[0] == '2':
+            total = total + get_double_payout(str(item[2:]))
+        if item[0] == '3':
+            total = total + get_triple_payout(str(item[2:]))
+    return total
+
+def add_to_best_stats(array):
+    for item in array:
+        if item[0] == '2':
+            stats[item]['bestPlayHits'] = stats[item]['bestPlayHits'] + 1
+        if item[0] == '3':
+            stats[item]['bestPlayHits'] = stats[item]['bestPlayHits'] + 1
+
+def add_to_overall_stats(array):
+    for item in array:
+        if item[0] == '2':
+            stats[item]['overallHits'] = stats[item]['overallHits'] + 1
+        if item[0] == '3':
+            stats[item]['overallHits'] = stats[item]['overallHits'] + 1
 
 def run_analysis():
-    deals = 100
     lines = 16
     average_payout = 0
     max_rtp = 0
+    
     for mask in bitmasks:
+        system('clear')
+        best_strategy = []
         rtp = 0
+        winning_arrays_per_deal = []
+        
         round_for_mask = 0
         while(round_for_mask < deals):
             round_for_mask = round_for_mask + 1
@@ -143,17 +253,26 @@ def run_analysis():
                 if mask[i] == str(1):
                     new_card, cards = deal_new_card(cards)
                     player_hand[i] = new_card
-            rtp = rtp +  calculate_payout(player_hand)
-        rtp = rtp / (lines * deals)
-        print(rtp)
-        if rtp > max_rtp:
-            max_rtp = rtp
-            print("Best Total for bitmask: {}".format(max_rtp))
-        system('clear')
+            winning_arrays_per_deal.append(winning_lines(player_hand))
+        for array_winnings in winning_arrays_per_deal:
+            rtp = calculate_payout_deal(array_winnings)
+            add_to_overall_stats(array_winnings)
+            rtp = rtp / (lines * deals)
+            if rtp > max_rtp:
+                max_rtp = rtp
+                best_strategy = array_winnings
+        add_to_best_stats(best_strategy)
         print("#######################################")
         print("Bitmask: {}".format(mask))
-        print("Max RTP: {}".format(max_rtp))
+        # print("Max RTP: {}".format(max_rtp))
         print("########################################")
+        print("#######################################")
+        print("OVERALL STATS (EVERY DISCARD ON EVERY HAND)")
+        print_overall_stats()
+        print("#######################################")
+        print("BEST HAND STATS (BEST OUTCOME FOR EACH DEAL FOR EACH BITMASK")
+        print_best_hand_stats()
+ 
 
 # def print_stats():
     # print("Round: {}, Average Payout: {}, percent: {} %"
@@ -161,12 +280,10 @@ def run_analysis():
 
 
 if __name__ == '__main__':
-    round = 0
-
     for num in range(513):
         bitmasks.append(bin(num)[2:].zfill(9))
 
-    while round < 2:
+    while round < 1000:
         round = round + 1
         run_analysis()
         # print_stats()
