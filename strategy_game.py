@@ -2,8 +2,9 @@ import random
 from os import system
 
 # runtime variables
-deals = 100
+deals = 200
 round = 0
+rounds = 100
 
 
 
@@ -131,14 +132,6 @@ stats = {
     },
 }
 
-times_hit = {
-    '0': 0,
-    '1': 0,
-    '2': 0,
-    '3': 0,
-    '4': 0
-}
-
 def get_double_payout(card):
     return stats['2x' + card]['payout']
 
@@ -169,19 +162,6 @@ def winning_lines(hand):
                 winning_rows.append('2x' + hand[line[2]])
     return winning_rows            
 
-
-def calculate_payout(hand):
-    total = 0
-    for line in lines:
-        line_total = 0 
-        if hand[line[0]] == hand[line[1]]:
-            if hand[line[1]] == hand[line[2]]:
-                line_total = line_total + get_triple_payout(hand[line[0]])
-            else:
-                line_total = line_total + get_double_payout(hand[line[0]])
-            total = line_total
-    return total
-
 def reset_cards():
     cards = ['cherry', 'cherry', 'cherry', 'cherry', 'cherry', 'cherry', 'cherry', 'cherry',
             'cherry2', 'cherry2', 'cherry2', 'cherry2', 'cherry2', 'cherry2',
@@ -197,16 +177,15 @@ def reset_cards():
 def print_overall_stats():
     maxrtp = 0
     for key, value in stats.items():
-        maxrtp = maxrtp + value['overallHits']/(512 * round * deals)*value['payout']
-        print("{}: {} hits, Probability: {}, RTP: {}".format(key, value['overallHits'], value['overallHits']/(512 * round * deals), value['overallHits']/(512 * round * deals)*value['payout']))
-    print("MAX RTP OVERALL: {}".format(maxrtp))
+            print("{}: {} hits, Probability: {}".format(key, value['overallHits'], value['overallHits']/(512 * round * deals)))
 
 def print_best_hand_stats():
     maxrtp = 0
+    print("{:<15s}{:>15s}{:>15s}{:>15s}".format("Card","Hits","Probability","RTP"))
     for key, value in stats.items():
-        maxrtp = maxrtp + value['bestPlayHits']/(512 * round * deals)*value['payout']
-        print("{}: {} hits, Probability: {}, RTP: {}".format(key, value['bestPlayHits'], value['bestPlayHits']/(round * deals), value['bestPlayHits']/(round * deals)*value['payout']))
-    print("MAX RTP BEST HAND: {}".format(maxrtp))
+        maxrtp = maxrtp + value['bestPlayHits']/(round * deals)*value['payout']/16
+        print("{:<15s}{:>15d}{:>15f}{:>15f}".format(key,value['bestPlayHits'],value['bestPlayHits']/(round * deals),value['bestPlayHits']/(round * deals)*value['payout']/16))
+    print("MAX RTP: {}".format(maxrtp))
 
 
 def calculate_payout_deal(array):
@@ -234,18 +213,17 @@ def add_to_overall_stats(array):
 
 def run_analysis():
     lines = 16
-    average_payout = 0
     max_rtp = 0
-    
+    best_winning_array_of_deals = []
+    best_mask = 0
     for mask in bitmasks:
-        system('clear')
         best_strategy = []
         rtp = 0
         winning_arrays_per_deal = []
         
-        round_for_mask = 0
-        while(round_for_mask < deals):
-            round_for_mask = round_for_mask + 1
+        deal = 0
+        while(deal < deals):
+            deal = deal + 1
             cards = reset_cards()
             player_hand, cards = deal_nine(cards)
             mask_total = 0
@@ -255,37 +233,27 @@ def run_analysis():
                     player_hand[i] = new_card
             winning_arrays_per_deal.append(winning_lines(player_hand))
         for array_winnings in winning_arrays_per_deal:
-            rtp = calculate_payout_deal(array_winnings)
+            rtp = rtp + calculate_payout_deal(array_winnings)
             add_to_overall_stats(array_winnings)
-            rtp = rtp / (lines * deals)
-            if rtp > max_rtp:
-                max_rtp = rtp
-                best_strategy = array_winnings
-        add_to_best_stats(best_strategy)
-        print("#######################################")
-        print("Bitmask: {}".format(mask))
-        # print("Max RTP: {}".format(max_rtp))
-        print("########################################")
-        print("#######################################")
-        print("OVERALL STATS (EVERY DISCARD ON EVERY HAND)")
-        print_overall_stats()
-        print("#######################################")
-        print("BEST HAND STATS (BEST OUTCOME FOR EACH DEAL FOR EACH BITMASK")
-        print_best_hand_stats()
+        rtp = rtp / (lines * deals)
+        if rtp > max_rtp:
+            max_rtp = rtp
+            best_mask = mask
+            best_winning_array_of_deals = winning_arrays_per_deal
+    print(best_winning_array_of_deals)
+    for array in best_winning_array_of_deals:
+        add_to_best_stats(array)
+    print("#######################################")
+    print("BEST HAND STATS (BEST OUTCOME FOR EACH DEAL FOR EACH BITMASK")
+    print('MASK: {}'.format(best_mask))
+    print_best_hand_stats()
  
-
-# def print_stats():
-    # print("Round: {}, Average Payout: {}, percent: {} %"
-        #       .format(round,num_bonus_rounds,str(float(num_bonus_rounds)/float(round) * 100)))
-
 
 if __name__ == '__main__':
     for num in range(513):
         bitmasks.append(bin(num)[2:].zfill(9))
 
-    while round < 1000:
+    while round < rounds:
         round = round + 1
         run_analysis()
-        # print_stats()
-        # print("Round: {}, Average Payout: {}, percent: {} %"
-        #       .format(round,num_bonus_rounds,str(float(num_bonus_rounds)/float(round) * 100)))
+
