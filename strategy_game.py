@@ -4,7 +4,7 @@ from os import system
 # runtime variables
 deals = 200
 round = 0
-rounds = 100
+rounds = 1000
 
 
 
@@ -174,11 +174,6 @@ def reset_cards():
             'Seven3', 'Seven3', 'Seven3']
     return cards
 
-def print_overall_stats():
-    maxrtp = 0
-    for key, value in stats.items():
-            print("{}: {} hits, Probability: {}".format(key, value['overallHits'], value['overallHits']/(512 * round * deals)))
-
 def print_best_hand_stats():
     maxrtp = 0
     print("{:<15s}{:>15s}{:>15s}{:>15s}".format("Card","Hits","Probability","RTP"))
@@ -204,13 +199,6 @@ def add_to_best_stats(array):
         if item[0] == '3':
             stats[item]['bestPlayHits'] = stats[item]['bestPlayHits'] + 1
 
-def add_to_overall_stats(array):
-    for item in array:
-        if item[0] == '2':
-            stats[item]['overallHits'] = stats[item]['overallHits'] + 1
-        if item[0] == '3':
-            stats[item]['overallHits'] = stats[item]['overallHits'] + 1
-
 def run_analysis():
     lines = 16
     max_rtp = 0
@@ -234,17 +222,16 @@ def run_analysis():
             winning_arrays_per_deal.append(winning_lines(player_hand))
         for array_winnings in winning_arrays_per_deal:
             rtp = rtp + calculate_payout_deal(array_winnings)
-            add_to_overall_stats(array_winnings)
         rtp = rtp / (lines * deals)
         if rtp > max_rtp:
             max_rtp = rtp
             best_mask = mask
             best_winning_array_of_deals = winning_arrays_per_deal
-    print(best_winning_array_of_deals)
     for array in best_winning_array_of_deals:
+        print(len(best_winning_array_of_deals))
         add_to_best_stats(array)
     print("#######################################")
-    print("BEST HAND STATS (BEST OUTCOME FOR EACH DEAL FOR EACH BITMASK")
+    print("BEST STRATEGY STATS")
     print('MASK: {}'.format(best_mask))
     print_best_hand_stats()
  

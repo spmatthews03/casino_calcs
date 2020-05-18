@@ -131,98 +131,6 @@ stats = {
         'payout':100
     },
 }
-# stats = {
-#     '2xbar': {
-#         'bestPlayHits': 0,
-#         'overallHits':0,
-#         'payout':2
-#     },
-#     '3xbar': {
-#         'bestPlayHits': 0,
-#         'overallHits':0,
-#         'payout':20
-#     },
-#     '2xbar2': {
-#         'bestPlayHits': 0,
-#         'overallHits':0,
-#         'payout':6
-#     },
-#     '3xbar2': {
-#         'bestPlayHits': 0,
-#         'overallHits':0,
-#         'payout':60
-#     },
-#     '2xMelon': {
-#         'bestPlayHits': 0,
-#         'overallHits':0,
-#         'payout':2
-#     },
-#     '3xMelon': {
-#         'bestPlayHits': 0,
-#         'overallHits':0,
-#         'payout':20
-#     },
-#     '2xCoin': {
-#         'bestPlayHits': 0,
-#         'overallHits':0,
-#         'payout':4
-#     },
-#     '3xCoin': {
-#         'bestPlayHits': 0,
-#         'overallHits':0,
-#         'payout':40
-#     },
-#     '2xCrown': {
-#         'bestPlayHits': 0,
-#         'overallHits':0,
-#         'payout':6
-#     },
-#     '3xCrown': {
-#         'bestPlayHits': 0,
-#         'overallHits':0,
-#         'payout':60
-#     },
-#     '2xcherry': {
-#         'bestPlayHits': 0,
-#         'overallHits':0,
-#         'payout':1
-#     },
-#     '3xcherry': {
-#         'bestPlayHits': 0,
-#         'overallHits':0,
-#         'payout':10
-#     },
-#     '2xcherry2': {
-#         'bestPlayHits': 0,
-#         'overallHits':0,
-#         'payout':4
-#     },
-#     '3xcherry2': {
-#         'bestPlayHits': 0,
-#         'overallHits':0,
-#         'payout':40
-#     },
-#     '2xSeven': {
-#         'bestPlayHits': 0,
-#         'overallHits':0,
-#         'payout':6
-#     },
-#     '3xSeven': {
-#         'bestPlayHits': 0,
-#         'overallHits':0,
-#         'payout':60
-#     },
-#     '2xSeven3': {
-#         'bestPlayHits': 0,
-#         'overallHits':0,
-#         'payout':10
-#     },
-#     '3xSeven3':{
-#         'bestPlayHits': 0,
-#         'overallHits':0,
-#         'payout':100
-#     },
-# }
 
 def get_double_payout(card):
     return stats['2x' + card]['payout']
@@ -249,9 +157,9 @@ def winning_lines(hand):
     for line in lines:
         if hand[line[0]] == hand[line[1]]:
             if hand[line[1]] == hand[line[2]]:
-                winning_rows.append('3x' + hand[line[2]])
+                winning_rows.append('3x' + hand[line[0]])
             else:
-                winning_rows.append('2x' + hand[line[2]])
+                winning_rows.append('2x' + hand[line[0]])
     return winning_rows            
 
 def reset_cards():
@@ -332,8 +240,6 @@ def run_analysis():
         # print(len(best_winning_array_of_deals))
         add_to_best_stats(array)
     print("#######################################")
-    print("BEST STRATEGY STATS")
-    print('MASK: {}'.format(best_mask))
     print_best_hand_stats()
     print("Round: {}".format(round))
  

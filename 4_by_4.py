@@ -52,7 +52,7 @@ stats = {
     '4xbar': {
         'bestPlayHits': 0,
         'overallHits':0,
-        'payout':35
+        'payout':30
     },
     '3xbar2': {
         'bestPlayHits': 0,
@@ -62,7 +62,7 @@ stats = {
     '4xbar2': {
         'bestPlayHits': 0,
         'overallHits':0,
-        'payout':100
+        'payout':75
     },
     '3xMelon': {
         'bestPlayHits': 0,
@@ -72,7 +72,7 @@ stats = {
     '4xMelon': {
         'bestPlayHits': 0,
         'overallHits':0,
-        'payout':35
+        'payout':30
     },
     '3xCoin': {
         'bestPlayHits': 0,
@@ -82,7 +82,7 @@ stats = {
     '4xCoin': {
         'bestPlayHits': 0,
         'overallHits':0,
-        'payout':50
+        'payout':45
     },
     '3xCrown': {
         'bestPlayHits': 0,
@@ -92,7 +92,7 @@ stats = {
     '4xCrown': {
         'bestPlayHits': 0,
         'overallHits':0,
-        'payout':100
+        'payout':75
     },
     '3xcherry': {
         'bestPlayHits': 0,
@@ -112,7 +112,7 @@ stats = {
     '4xcherry2': {
         'bestPlayHits': 0,
         'overallHits':0,
-        'payout':50
+        'payout':75
     },
     '3xSeven': {
         'bestPlayHits': 0,
@@ -122,7 +122,7 @@ stats = {
     '4xSeven': {
         'bestPlayHits': 0,
         'overallHits':0,
-        'payout':100
+        'payout':75
     },
     '3xSeven3': {
         'bestPlayHits': 0,
@@ -132,7 +132,7 @@ stats = {
     '4xSeven3':{
         'bestPlayHits': 0,
         'overallHits':0,
-        'payout':200
+        'payout':250
     },
 }
 
